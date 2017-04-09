@@ -20,7 +20,9 @@
                 var input = propertyValue.ToString();
 
                 // find all the internal links that refers to the ID of the page.
-                input = ConvertInternalLinkToGuid(dependantNodes, input);
+
+                input = ConvertInternalLinkToGuid(dependantNodes, input, @"<a href=""/{localLink:(\d+)}""", 1);
+                input = ConvertInternalLinkToGuid(dependantNodes, input, @"<a data-id=""(\d+)"" href=""/{localLink:(\d+)}""", 2);
 
                 // find all the images and change the url to guid
                 input = ConvertMediaUrlToGuidOnImageTag(dependantNodes, input);
@@ -39,7 +41,9 @@
             {
                 var input = propertyTag.Value;
 
-                input = this.ConvertGuidToInternalLink(input);
+
+                input = this.ConvertGuidToInternalLink(input, @"<a href=""/{localLink:(\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b)}", 1);
+                input = this.ConvertGuidToInternalLink(input, @"<a data-id=""(\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b)"" href=""/{localLink:(\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b)}", 2);
 
                 input = this.ConvertGuidToMediaUrlOnImageTag(input);
                 
@@ -51,21 +55,21 @@
             return result;
         }
 
-        private string ConvertInternalLinkToGuid(Dictionary<int, ObjectTypes> dependantNodes, string input)
+        private string ConvertInternalLinkToGuid(Dictionary<int, ObjectTypes> dependantNodes, string input, string pattern, int groupToMatch)
         {
-            var matchesUrls = Regex.Matches(input, @"<a href=""/{localLink:(\d+)}""");
+            var matchesUrls = Regex.Matches(input, pattern);
 
             if (matchesUrls.Count > 0)
             {
                 foreach (Match match in matchesUrls)
                 {
                     int id;
-                    var node = match.Groups[1].Value;
+                    var node = match.Groups[groupToMatch].Value;
 
                     if (int.TryParse(node, out id))
                     {
                         var content = Services.ContentService.GetById(id);
-                        input = input.Replace(match.Value, @"<a href=""/{localLink:" + content.Key + @"}"" ");
+                        input = input.Replace(match.Value, "<a data-id=\"" + content.Key + "\" href=\"/{localLink:" + content.Key + "}\"");
 
                         ////if (!dependantNodes.ContainsKey(content.Id))
                         ////{
@@ -191,22 +195,22 @@
             return input;
         }
 
-        private string ConvertGuidToInternalLink(string input)
+        private string ConvertGuidToInternalLink(string input, string pattern, int groupToMatch)
         {
             // find all the internal links that refers to guid of the page.
             var matchesUrls = Regex.Matches(
                 input,
-                @"<a href=""/{localLink:(\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b)}",
+                pattern,
                 RegexOptions.IgnoreCase);
 
             foreach (Match match in matchesUrls)
             {
-                var guid = new Guid(match.Groups[1].Value);
+                var guid = new Guid(match.Groups[groupToMatch].Value);
                 var content = Services.ContentService.GetById(guid);
 
                 if (content != null)
                 {
-                    input = input.Replace(match.Value, @"<a href=""/{localLink:" + content.Id + @"}"" ");
+                    input = input.Replace(match.Value, @"<a data-id=""" + content.Id + @""" href=""/{localLink:" + content.Id + @"}"" ");
                 }
             }
 
