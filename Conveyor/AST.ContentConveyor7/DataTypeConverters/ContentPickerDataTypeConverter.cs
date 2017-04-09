@@ -11,11 +11,11 @@
 
     public class ContentPickerDataTypeConverter : BaseContentManagement, IDataTypeConverter
     {
-        public void Export(Property property, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
+        public void Export(string propertyValue, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
         {
-            if (property.Value != null && !string.IsNullOrWhiteSpace(property.Value.ToString()))
+            if (propertyValue != null && !string.IsNullOrWhiteSpace(propertyValue.ToString()))
             {
-                var id = int.Parse(property.Value.ToString());
+                var id = int.Parse(propertyValue.ToString());
 
                 var content = Services.ContentService.GetById(id);
                 propertyTag.Value = content.Key.ToString();

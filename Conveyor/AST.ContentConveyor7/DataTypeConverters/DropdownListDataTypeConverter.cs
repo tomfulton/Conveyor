@@ -15,13 +15,13 @@
 
     public class DropdownListDataTypeConverter : BaseContentManagement, IDataTypeConverter
     {
-        public void Export(Property property, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
+        public void Export(string propertyValue, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
         {
-            if (property.Value != null && !string.IsNullOrWhiteSpace(property.Value.ToString()))
+            if (propertyValue != null && !string.IsNullOrWhiteSpace(propertyValue.ToString()))
             {
                 int id;
 
-                if (int.TryParse(property.Value.ToString(), out id))
+                if (int.TryParse(propertyValue.ToString(), out id))
                 {
                     propertyTag.Value = Services.DataTypeService.GetPreValueAsString(id);
                 }

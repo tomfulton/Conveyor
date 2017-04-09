@@ -15,19 +15,19 @@
 
     public class MultiNodeTreePickerDataTypeConverter : BaseContentManagement, IDataTypeConverter
     {
-        public void Export(Property property, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
+        public void Export(string propertyValue, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
         {
-            if (property.Value != null && !string.IsNullOrWhiteSpace(property.Value.ToString()))
+            if (propertyValue != null && !string.IsNullOrWhiteSpace(propertyValue.ToString()))
             {
                 int[] nodeIds;
 
-                if (XmlHelper.CouldItBeXml(property.Value.ToString()))
+                if (XmlHelper.CouldItBeXml(propertyValue.ToString()))
                 {
-                    nodeIds = uQuery.GetXmlIds(property.Value.ToString());
+                    nodeIds = uQuery.GetXmlIds(propertyValue.ToString());
                 }
                 else
                 {
-                    nodeIds = property.Value.ToString().Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+                    nodeIds = propertyValue.ToString().Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
                 }
 
                 if (nodeIds.Length > 0)

@@ -27,7 +27,7 @@
 
         #region Fields
 
-        public Dictionary<Guid, string> SpecialDataTypes { get; set; }
+        public Dictionary<string, string> SpecialDataTypes { get; set; }
 
         public ServiceContext Services { get; set; }
 
@@ -96,13 +96,14 @@
             {
                 var tag = property.ToXml();
                 var propertyType = propertyTypes.ElementAt(count);
-                tag.Add(new XAttribute("dataTypeGuid", propertyType.DataTypeId));
-                tag.Add(new XAttribute("dataTypeName", Services.DataTypeService.GetDataTypeDefinitionById(propertyType.DataTypeDefinitionId).Name));
+                var dt = Services.DataTypeService.GetDataTypeDefinitionById(propertyType.DataTypeDefinitionId);
+                var propertyEditorAlias = dt.PropertyEditorAlias;
 
-                var guid = propertyTypes.ElementAt(count).DataTypeId;
+                tag.Add(new XAttribute("propertyEditorAlias", propertyEditorAlias));
+                tag.Add(new XAttribute("dataTypeName", dt.Name));
 
                 // TODO for v6
-                if (guid == new Guid(Constants.UploadDataTypeGuid) && property.Value != null)
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias && property.Value != null)
                 {
                     var umbracoFile = property.Value.ToString();
                     tag.Add(
@@ -110,9 +111,9 @@
                         new XAttribute("fileName", umbracoFile.Split('/').Last()),
                         new XAttribute("objectType", ObjectTypes.File));
                 }
-                else if (SpecialDataTypes.ContainsKey(guid))
+                else if (SpecialDataTypes.ContainsKey(propertyEditorAlias))
                 {
-                    DataTypeConverterExport(property, tag, dependantNodes, SpecialDataTypes[guid]);
+                    DataTypeConverterExport(property, tag, dependantNodes, SpecialDataTypes[propertyEditorAlias]);
                 }
 
                 currentContent.Add(tag);
@@ -149,11 +150,13 @@
             {
                 var tag = property.ToXml();
                 var propertyType = propertyTypes.ElementAt(count);
-                tag.Add(new XAttribute("dataTypeGuid", propertyType.DataTypeId));
-                tag.Add(new XAttribute("dataTypeName", Services.DataTypeService.GetDataTypeDefinitionById(propertyType.DataTypeDefinitionId).Name));
+                var dt = Services.DataTypeService.GetDataTypeDefinitionById(propertyType.DataTypeDefinitionId);
+                var propertyEditorAlias = dt.PropertyEditorAlias;
 
-                var guid = propertyTypes.ElementAt(count).DataTypeId;
-                if (guid == new Guid(Constants.UploadDataTypeGuid))
+                tag.Add(new XAttribute("propertyEditorAlias", propertyEditorAlias));
+                tag.Add(new XAttribute("dataTypeName", dt.Name));
+
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias)
                 {
                     var umbracoFile = property.Value.ToString();
                     tag.Add(
@@ -161,9 +164,9 @@
                         new XAttribute("fileName", umbracoFile.Split('/').Last()),
                         new XAttribute("objectType", ObjectTypes.File));
                 }
-                else if (SpecialDataTypes.ContainsKey(guid))
+                else if (SpecialDataTypes.ContainsKey(propertyEditorAlias))
                 {
-                    DataTypeConverterExport(property, tag, dependantNodes, SpecialDataTypes[guid]);
+                    DataTypeConverterExport(property, tag, dependantNodes, SpecialDataTypes[propertyEditorAlias]);
                 }
 
                 node.Add(tag);
@@ -181,7 +184,7 @@
         {
             var t = GetDataTypeConverterInterface(type);
 
-            t.Export(property, propertyTag, dependantNodes);
+            t.Export(property.Value.ToString(), propertyTag, dependantNodes);
         }
 
         #endregion

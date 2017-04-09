@@ -13,11 +13,11 @@
 
     public class RichTextEditorDataTypeConverter : BaseContentManagement, IDataTypeConverter
     {
-        public void Export(Property property, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
+        public void Export(string propertyValue, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes)
         {
-            if (property.Value != null && !string.IsNullOrWhiteSpace(property.Value.ToString()))
+            if (propertyValue != null && !string.IsNullOrWhiteSpace(propertyValue.ToString()))
             {
-                var input = property.Value.ToString();
+                var input = propertyValue.ToString();
 
                 // find all the internal links that refers to the ID of the page.
                 input = ConvertInternalLinkToGuid(dependantNodes, input);

@@ -9,7 +9,7 @@
 
     public interface IDataTypeConverter
     {
-        void Export(Property property, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes);
+        void Export(string propertyValue, XElement propertyTag, Dictionary<int, ObjectTypes> dependantNodes);
 
         string Import(XElement propertyTag);
     }

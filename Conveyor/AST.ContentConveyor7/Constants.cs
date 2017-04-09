@@ -12,8 +12,6 @@
 
         public const string ContentFileName = "ContentConveyor.xml";
 
-        public const string UploadDataTypeGuid = "5032a6e6-69e3-491d-bb28-cd31cd11086c";
-
         public static readonly string[] MediaDefaultProperties =
         {
             "umbracoWidth", "umbracoHeight", "umbracoBytes",

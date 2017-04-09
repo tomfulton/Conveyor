@@ -1,4 +1,6 @@
-﻿namespace AST.ContentConveyor7
+﻿using Umbraco.Core.Logging;
+
+namespace AST.ContentConveyor7
 {
     using System;
     using System.Collections.Generic;
@@ -129,14 +131,14 @@
 
             foreach (var propertyTag in node.Elements())
             {
-                var dataTypeGuid = new Guid(propertyTag.Attribute("dataTypeGuid").Value);
+                var propertyEditorAlias = propertyTag.Attribute("propertyEditorAlias").Value.ToString();
 
                 var value = propertyTag.Value;
 
                 // The null check here is necessary. Blank content exports into the xml, which is fine, since on
                 // import the blank value gets mapped across. However, for upload datatypes, this blank value
                 // causes an exception here - unless we perform the null check.
-                if (dataTypeGuid == new Guid(Constants.UploadDataTypeGuid) && propertyTag.Attribute("fileName") != null)
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias && propertyTag.Attribute("fileName") != null)
                 {
                     var fileName = propertyTag.Attribute("fileName").Value;
                     var umbracoFile = propertyTag.Attribute("umbracoFile").Value;
@@ -150,7 +152,7 @@
                         content.SetValue(propertyTag.Name.ToString(), string.Empty);
                     }
                 }
-                else if (!dataTypes.ContainsKey(dataTypeGuid))
+                else if (!dataTypes.ContainsKey(propertyEditorAlias))
                 {
                     content.SetValue(propertyTag.Name.ToString(), value);
                 }
@@ -198,9 +200,10 @@
 
             foreach (var propertyTag in node.Elements())
             {
-                var dataTypeGuid = new Guid(propertyTag.Attribute("dataTypeGuid").Value);
+                var propertyEditorAlias = propertyTag.Attribute("propertyEditorAlias").Value.ToString();
+                //var dataType = Services.DataTypeService.GetDataTypeDefinitionByName(propertyTag.Attribute("dataTypeName").Value.ToString());
 
-                if (dataTypeGuid == new Guid(Constants.UploadDataTypeGuid))
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias)
                 {
                     var fileName = propertyTag.Attribute("fileName").Value;
                     var umbracoFile = propertyTag.Attribute("umbracoFile").Value;
@@ -214,7 +217,7 @@
                         media.SetValue(propertyTag.Name.ToString(), string.Empty);
                     }
                 }
-                else if (!SpecialDataTypes.ContainsKey(dataTypeGuid))
+                else if (!SpecialDataTypes.ContainsKey(propertyEditorAlias))
                 {
                     media.SetValue(propertyTag.Name.ToString(), propertyTag.Value);
                 }
@@ -305,9 +308,9 @@
                     }
                 }
 
-                var nodesWithSpecialProperties = root.Descendants().Where(x => x.Attribute("dataTypeGuid") != null
-                    && !string.IsNullOrWhiteSpace(x.Attribute("dataTypeGuid").Value)
-                    && SpecialDataTypes.ContainsKey(new Guid(x.Attribute("dataTypeGuid").Value)))
+                var nodesWithSpecialProperties = root.Descendants().Where(x => x.Attribute("propertyEditorAlias") != null
+                    && !string.IsNullOrWhiteSpace(x.Attribute("propertyEditorAlias").Value)
+                    && SpecialDataTypes.ContainsKey(x.Attribute("propertyEditorAlias").Value))
                     .GroupBy(x => x.Parent.Attribute("guid").Value)
                     .Select(
                             y => new
@@ -323,8 +326,8 @@
 
                     foreach (var prop in node.Properties)
                     {
-                        var dataTypeGuid = new Guid(prop.Attribute("dataTypeGuid").Value);
-                        var value = DataTypeConverterImport(prop, dataTypeGuid);
+                        var propertyEditorAlias = prop.Attribute("propertyEditorAlias").Value;
+                        var value = DataTypeConverterImport(prop, propertyEditorAlias);
                         iContent.SetValue(prop.Name.ToString(), value);
                         
                     }
@@ -348,9 +351,9 @@
             return memoryStream;
         }
 
-        private string DataTypeConverterImport(XElement propertyTag, Guid guid)
+        private string DataTypeConverterImport(XElement propertyTag, string propertyEditorAlias)
         {
-            var type = SpecialDataTypes[guid];
+            var type = SpecialDataTypes[propertyEditorAlias];
 
             var dataTypeConverter = GetDataTypeConverterInterface(type);
 

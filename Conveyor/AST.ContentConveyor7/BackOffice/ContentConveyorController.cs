@@ -124,13 +124,13 @@
         {
             var dts = Services.DataTypeService;
 
-            var allDataType = dts.GetAllDataTypes();
+            var allDataType = dts.GetAllDataTypeDefinitions();
 
             var config = new Config();
             var compatibleDataTypes = config.GetSpecialDataTypes().Select(x => x.Key).ToList();
             compatibleDataTypes.AddRange(config.GetOtherDataTypes().Keys);
 
-            var notCompatibleDataTypes = allDataType.Where(x => !compatibleDataTypes.Contains(x.Id));
+            var notCompatibleDataTypes = allDataType.Where(x => !compatibleDataTypes.Contains(x.PropertyEditorAlias));
 
             return View(string.Format(ViewsFolder, "CompatibilityCheck"), notCompatibleDataTypes);
         }

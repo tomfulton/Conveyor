@@ -19,11 +19,11 @@
 
         #region Methods
 
-        public Dictionary<Guid, string> GetSpecialDataTypes()
+        public Dictionary<string, string> GetSpecialDataTypes()
         {
             FileNameWithPath = HostingEnvironment.MapPath(ConfigFile);
 
-            var result = new Dictionary<Guid, string>();
+            var result = new Dictionary<string, string>();
 
             if (File.Exists(FileNameWithPath))
             {
@@ -32,18 +32,18 @@
                 if (config.Root != null)
                 {
                     result = config.Root.Element("SpecialDataTypes").Elements()
-                        .ToDictionary(dt => new Guid(dt.Attribute("guid").Value), dt => dt.Attribute("type").Value);
+                        .ToDictionary(dt => dt.Attribute("alias").Value.ToString(), dt => dt.Attribute("type").Value);
                 }
             }
 
             return result;
         }
 
-        public Dictionary<Guid, string> GetOtherDataTypes()
+        public Dictionary<string, string> GetOtherDataTypes()
         {
             FileNameWithPath = HostingEnvironment.MapPath(ConfigFile);
 
-            var result = new Dictionary<Guid, string>();
+            var result = new Dictionary<string, string>();
 
             if (File.Exists(FileNameWithPath))
             {
@@ -52,7 +52,7 @@
                 if (config.Root != null)
                 {
                     result = config.Root.Element("OtherDataTypes").Elements()
-                        .ToDictionary(dt => new Guid(dt.Attribute("guid").Value), dt => dt.Attribute("name").Value);
+                        .ToDictionary(dt => dt.Attribute("alias").Value, dt => dt.Attribute("name").Value);
                 }
             }
 
