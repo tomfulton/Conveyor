@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Archetype, Version=1.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Archetype.Binaries.1.13.2\lib\net40\Archetype.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="businesslogic">
       <HintPath>..\packages\UmbracoCms.Core.7.2.4\lib\businesslogic.dll</HintPath>
     </Reference>
@@ -75,6 +79,8 @@
     <Compile Include="BackOffice\ContentConveyorTreeApplication.cs" />
     <Compile Include="BackOffice\ContentConveyorTree.cs" />
     <Compile Include="BackOffice\ContentConveyorController.cs" />
+    <Compile Include="DataTypeConverters\ArchetypeDataTypeConverter.cs" />
+    <Compile Include="DataTypeConverters\ArchetypeDataTypeConverterExtensions.cs" />
     <Compile Include="DataTypeConverters\ContentPickerDataTypeConverter.cs" />
     <Compile Include="DataTypeConverters\DropdownListDataTypeConverter.cs" />
     <Compile Include="DataTypeConverters\MediaPickerDataTypeConverter.cs" />
