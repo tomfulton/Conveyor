@@ -94,7 +94,18 @@
 
             foreach (var property in content.Properties)
             {
-                var tag = property.ToXml();
+                XElement tag = null;
+                if (property.Value == null)
+                {
+                    // ToXml fails, so create an empty one instead manually
+                    tag = new XElement(property.Alias) { Value = "" };
+                }
+                else
+                {
+                    tag = property.ToXml();
+                    
+                }
+
                 var propertyType = propertyTypes.ElementAt(count);
                 var dt = Services.DataTypeService.GetDataTypeDefinitionById(propertyType.DataTypeDefinitionId);
                 var propertyEditorAlias = dt.PropertyEditorAlias;
@@ -184,7 +195,10 @@
         {
             var t = GetDataTypeConverterInterface(type);
 
-            t.Export(property.Value.ToString(), propertyTag, dependantNodes);
+            if (property.Value != null && !string.IsNullOrEmpty(property.Value.ToString())) // Don't execute for empty values ? -- causes exception in .ToString() below
+            {
+                t.Export(property.Value.ToString(), propertyTag, dependantNodes);
+            }
         }
 
         #endregion

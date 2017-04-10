@@ -1,4 +1,6 @@
-﻿namespace AST.ContentConveyor7.BackOffice
+﻿using Umbraco.Core.Logging;
+
+namespace AST.ContentConveyor7.BackOffice
 {
     using System;
     using System.Collections.Generic;
@@ -78,6 +80,7 @@
                 }
                 catch (Exception ex)
                 {
+                    LogHelper.Error<ContentConveyorController>("Exception during Export: ", ex);
                     ModelState.AddModelError("exportError", ex.Message);
                 }
             }
@@ -111,10 +114,10 @@
                 }
                 catch (Exception ex)
                 {
+                    LogHelper.Error<ContentConveyorController>("Exception during Import: ", ex);
                     ModelState.AddModelError("importError", ex.Message);
                 }
             }
-
 
             return View(view);
         }

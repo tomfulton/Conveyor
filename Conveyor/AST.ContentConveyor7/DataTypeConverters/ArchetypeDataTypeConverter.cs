@@ -43,7 +43,11 @@ namespace AST.ContentConveyor7.DataTypeConverters
                         // Create "fake" property to execute DTC Export method in our own context
                         var fakeProperty = CreateFakePropertyTag(archetypeProperty, innerPropertyConfig, innerPropertyDataType);
 
-                        DataTypeConverterExport(archetypeProperty.Value.ToString(), fakeProperty, dependantNodes, SpecialDataTypes[innerPropertyDataType.PropertyEditorAlias]);
+                        var archetypePropertyValue = archetypeProperty.Value != null 
+                            ? archetypeProperty.Value.ToString()
+                            : "";
+
+                        DataTypeConverterExport(archetypePropertyValue, fakeProperty, dependantNodes, SpecialDataTypes[innerPropertyDataType.PropertyEditorAlias]);
 
                         // Some DTC's add custom attributes to the propertyTag - build a list and later add them as Archetype properties for reference during Import
                         foreach (var customAttribute in fakeProperty.GetCustomAttributesAddedByDtc())
@@ -118,7 +122,7 @@ namespace AST.ContentConveyor7.DataTypeConverters
             var fakePropertyTag = new XElement(archetypePropertyConfig.Alias);
             fakePropertyTag.SetAttributeValue("propertyEditorAlias", archetypePropertyDataType.PropertyEditorAlias);
             fakePropertyTag.SetAttributeValue("dataTypeName", archetypePropertyDataType.Name);
-            fakePropertyTag.Value = archetypeProperty.Value.ToString();
+            fakePropertyTag.Value = archetypeProperty.Value != null ? archetypeProperty.Value.ToString() : "";
 
             if (fieldsetCustomAttributes != null)
             {
