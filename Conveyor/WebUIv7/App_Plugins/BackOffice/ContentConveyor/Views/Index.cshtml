@@ -120,6 +120,36 @@
                     }
 
                 });
+
+                var check = function(node) {
+                    if (!node.lazy) {
+                        return;
+                    }
+
+                    node.load(true).done(function(d) {
+                        if (node.hasChildren()) {
+
+                            node.setExpanded(true);
+
+                            node.children.forEach(function (n) {
+                                n.setSelected(true);
+
+                                check(n);
+                            });
+                        }
+                    });
+                };
+
+                $('#btnSelectDescendants').click(function () {
+
+                    var node = tree.fancytree("getActiveNode");
+                    if (node) {
+                        check(node);
+                    } else {
+                        alert("No active node.");
+                    }
+
+                });
             };
 
         });
@@ -161,7 +191,8 @@
                                     <a href="#" id="btnSelectAll">Select all</a> |
                                     <a href="#" id="btnDeselectAll">Deselect all</a> |
                                     <a href="#" id="btnToggleSelect">Toggle select</a> |
-                                    <a href="#" id="btnSelectChildren">Select children</a>
+                                    <a href="#" id="btnSelectChildren">Select children</a> |
+                                    <a href="#" id="btnSelectDescendants">Select descendants</a>
                                     <div id="tree"></div>
                                 </div>
                             </div>
