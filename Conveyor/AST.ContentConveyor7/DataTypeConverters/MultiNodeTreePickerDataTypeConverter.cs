@@ -42,7 +42,15 @@
                     {
                         if (nodeType == ObjectTypes.Document.ToString())
                         {
-                            var guid = Services.ContentService.GetById(id).Key;
+                            var node = Services.ContentService.GetById(id);
+
+                            // the node reference may have been deleted
+                            if (node == null)
+                            {
+                                continue;
+                            }
+
+                            var guid = node.Key;
 
                             guidList.Add(guid);
                             if (!dependantNodes.ContainsKey(id))

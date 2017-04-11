@@ -138,7 +138,8 @@ namespace AST.ContentConveyor7
                 // The null check here is necessary. Blank content exports into the xml, which is fine, since on
                 // import the blank value gets mapped across. However, for upload datatypes, this blank value
                 // causes an exception here - unless we perform the null check.
-                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias && propertyTag.Attribute("fileName") != null)
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias && propertyTag.Attribute("fileName") != null
+                    && propertyTag.Attribute("umbracoFile") != null)
                 {
                     var fileName = propertyTag.Attribute("fileName").Value;
                     var umbracoFile = propertyTag.Attribute("umbracoFile").Value;
@@ -203,14 +204,23 @@ namespace AST.ContentConveyor7
                 var propertyEditorAlias = propertyTag.Attribute("propertyEditorAlias").Value.ToString();
                 //var dataType = Services.DataTypeService.GetDataTypeDefinitionByName(propertyTag.Attribute("dataTypeName").Value.ToString());
 
-                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias)
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias && propertyTag.Attribute("fileName") != null && propertyTag.Attribute("umbracoFile") != null)
                 {
                     var fileName = propertyTag.Attribute("fileName").Value;
                     var umbracoFile = propertyTag.Attribute("umbracoFile").Value;
 
                     if (!string.IsNullOrWhiteSpace(umbracoFile))
                     {
-                        media.SetValue(propertyTag.Name.ToString(), fileName, GetFileStream(umbracoFile, zip));
+                        var stream = GetFileStream(umbracoFile, zip);
+                        if (stream != null) // if media file does not exist - still import the media? -- local dev..
+                        {
+                            media.SetValue(propertyTag.Name.ToString(), fileName, stream);
+                        }
+                        else
+                        {
+                            LogHelper.Warn<ImportContent>("Error creating media item - the file " + umbracoFile + " was not found.  Created the media item but did not set the umbracoFile property");
+                            media.SetValue(propertyTag.Name.ToString(), string.Empty);
+                        }
                     }
                     else
                     {
@@ -344,6 +354,12 @@ namespace AST.ContentConveyor7
             var memoryStream = new MemoryStream();
 
             var zipEntry = zip.Entries.SingleOrDefault(x => x.FileName == umbracoFile);
+
+            if (zipEntry == null)
+            {
+                return null;
+            }
+
             zipEntry.Extract(memoryStream);
 
             memoryStream.Seek(0, SeekOrigin.Begin);

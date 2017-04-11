@@ -36,6 +36,11 @@ namespace AST.ContentConveyor7.DataTypeConverters
                 foreach (var archetypeProperty in fieldset.GetArchetypeProperties()) // Think we can remove this filter - just imported some bad data
                 {
                     var innerPropertyConfig = fieldsetConfig.Properties.FirstOrDefault(p => p.Alias == archetypeProperty.Alias);
+                    if (innerPropertyConfig == null)
+                    {
+                        // a value is stored in the archetype that no longer exists in the prevalues - leave it alone
+                        continue;
+                    }
                     var innerPropertyDataType = Services.DataTypeService.GetDataTypeDefinitionById(innerPropertyConfig.DataTypeGuid);
 
                     if (IsSpecialDataType(innerPropertyDataType))
@@ -101,6 +106,11 @@ namespace AST.ContentConveyor7.DataTypeConverters
                 foreach (var archetypeProperty in fieldset.Properties)
                 {
                     var innerPropertyConfig = fieldsetConfig.Properties.FirstOrDefault(p => p.Alias == archetypeProperty.Alias);
+                    if (innerPropertyConfig == null)
+                    {
+                        // a value is stored in the archetype that no longer exists in the prevalues - leave it alone
+                        continue;
+                    }
                     var innerPropertyDataType = Services.DataTypeService.GetDataTypeDefinitionById(innerPropertyConfig.DataTypeGuid);
 
                     if (IsSpecialDataType(innerPropertyDataType))

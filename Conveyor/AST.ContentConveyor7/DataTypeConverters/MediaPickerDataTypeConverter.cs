@@ -29,6 +29,10 @@
                         dependantNodes.Add(media.Id, ObjectTypes.Media);
                     }
                 }
+                else
+                {
+                    propertyTag.Value = ""; // If media is not found during export, blank out the property value (..?) as not to cause errors during import and confusion
+                }
             }
         }
 

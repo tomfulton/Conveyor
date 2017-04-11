@@ -167,7 +167,7 @@
                 tag.Add(new XAttribute("propertyEditorAlias", propertyEditorAlias));
                 tag.Add(new XAttribute("dataTypeName", dt.Name));
 
-                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias)
+                if (propertyEditorAlias == Umbraco.Core.Constants.PropertyEditors.UploadFieldAlias && property.Value != null)
                 {
                     var umbracoFile = property.Value.ToString();
                     tag.Add(
