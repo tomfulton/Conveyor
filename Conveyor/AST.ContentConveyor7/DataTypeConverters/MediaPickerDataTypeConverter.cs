@@ -19,8 +19,8 @@
                 var id = int.Parse(propertyValue.ToString());
                 var media = Services.MediaService.GetById(id);
 
-                // TODO for v6
-                if (media != null && FileHelpers.FileExists(media.GetValue("umbracoFile").ToString())) 
+                // TODO for v6      
+                if (media != null) // Create even if media missing for now --  && FileHelpers.FileExists(media.GetValue("umbracoFile").ToString())) 
                 {
                     propertyTag.Value = media.Key.ToString();
 

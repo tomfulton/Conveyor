@@ -43,7 +43,7 @@
                 {
                     if (node.Value == ObjectTypes.Document)
                     {
-                        xml.Add(SerialiseContent(Services.ContentService.GetById(node.Key), secondLevelDependentNodes));
+                        //xml.Add(SerialiseContent(Services.ContentService.GetById(node.Key), secondLevelDependentNodes));
                     }
                     else if (node.Value == ObjectTypes.Media)
                     {
@@ -64,7 +64,7 @@
                 {
                     if (node.Value == ObjectTypes.Document)
                     {
-                        xml.Add(SerialiseContent(Services.ContentService.GetById(node.Key)));
+                        //xml.Add(SerialiseContent(Services.ContentService.GetById(node.Key)));
                     }
                     else if (node.Value == ObjectTypes.Media)
                     {
