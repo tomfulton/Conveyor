@@ -43,7 +43,15 @@
             if (!string.IsNullOrWhiteSpace(propertyTag.Value))
             {
                 var guid = new Guid(propertyTag.Value);
-                var id = Services.MediaService.GetById(guid).Id;
+                var media = Services.MediaService.GetById(guid);
+
+                if (media == null)
+                {
+                    LogHelper.Warn<MediaPickerDataTypeConverter>("Could not find media item to replace GUID with ID. Importing and leaving GUID intact."); // TODO: Get the original value back somehow? More elegant solution?
+                    return propertyTag.Value;
+                }
+
+                var id = media.Id;
                 result = id.ToString();
             }
 
