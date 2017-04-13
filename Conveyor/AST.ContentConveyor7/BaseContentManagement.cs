@@ -171,7 +171,7 @@
                 {
                     var umbracoFile = property.Value.ToString();
                     tag.Add(
-                        new XAttribute("umbracoFile", umbracoFile),
+                        new XAttribute("umbracoFile", umbracoFile.Substring(umbracoFile.IndexOf("/media"))),
                         new XAttribute("fileName", umbracoFile.Split('/').Last()),
                         new XAttribute("objectType", ObjectTypes.File));
                 }
