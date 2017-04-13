@@ -11,7 +11,7 @@
         /// <returns>True if the file exists, and false if it does not</returns>
         public static bool FileExists(string file)
         {
-            var fullPath = HostingEnvironment.MapPath(file);
+            var fullPath = HostingEnvironment.MapPath("~" + file);
             return System.IO.File.Exists(fullPath);
         }
     }

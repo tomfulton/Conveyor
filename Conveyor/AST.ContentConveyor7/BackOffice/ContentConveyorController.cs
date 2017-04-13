@@ -65,7 +65,7 @@ namespace AST.ContentConveyor7.BackOffice
                             if (FileHelpers.FileExists(f))
                             {
                                 var fileAndParent = f.Replace(f.Split('/').Last(), string.Empty);
-                                zip.AddFile(HostingEnvironment.MapPath(f), fileAndParent);
+                                zip.AddFile(HostingEnvironment.MapPath("~" + f), fileAndParent);
                             }
                         }
 
