@@ -68,14 +68,14 @@
                     }
                     else if (node.Value == ObjectTypes.Media)
                     {
-                        var media = Services.MediaService.GetById(node.Key);
+                        //var media = Services.MediaService.GetById(node.Key);
 
-                        do
-                        {
-                            xml.Add(SerialiseMedia(media));
-                            media = media.Parent();
-                        }
-                        while (media != null);
+                        //do
+                        //{
+                        //    xml.Add(SerialiseMedia(media));
+                        //    media = media.Parent();
+                        //}
+                        //while (media != null);
                     }
                 }
 
